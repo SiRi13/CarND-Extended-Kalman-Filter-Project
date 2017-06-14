@@ -24,12 +24,12 @@ FusionEKF::FusionEKF() {
 
   //measurement covariance matrix - laser
   R_laser_ << 0.0225, 0,
-        0, 0.0225;
+              0, 0.0225;
 
   //measurement covariance matrix - radar
   R_radar_ << 0.09, 0, 0,
-        0, 0.0009, 0,
-        0, 0, 0.09;
+              0, 0.0009, 0,
+              0, 0, 0.09;
 
   H_laser_ << 1, 0, 0, 0,
               0, 1, 0, 0;
@@ -44,12 +44,12 @@ FusionEKF::FusionEKF() {
   // 4x4 matrix
   ekf_.P_ = MatrixXd(4, 4);
   ekf_.P_ << 1, 0, 0, 0,
-    			   0, 1, 0, 0,
-    			   0, 0, 1000, 0,
-    			   0, 0, 0, 1000;
+    	     0, 1, 0, 0,
+    	     0, 0, 1000, 0,
+    	     0, 0, 0, 1000;
 
-  noise_ax = 21;
-  noise_ay = 15;
+  noise_ax = 9;
+  noise_ay = 9;
 
 }
 
@@ -74,7 +74,7 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
     cout << "EKF: " << endl;
     ekf_.x_ = VectorXd(4);
     // important for RMSE
-    ekf_.x_ << 1, 1, 0.1, 0.02;
+    ekf_.x_ << 1, 1, 1, 1;
 
     if (measurement_pack.sensor_type_ == MeasurementPackage::RADAR) {
       /**
@@ -125,9 +125,9 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
   float dt_4 = dt_3 * dt;
   ekf_.Q_ = MatrixXd(4, 4);
   ekf_.Q_ << (dt_4/4)*noise_ax, 0, (dt_3/2)*noise_ax, 0,
-            0, (dt_4/4)*noise_ay, 0, (dt_3/2)*noise_ay,
-            (dt_3/2)*noise_ax, 0, dt_2*noise_ax, 0,
-            0, (dt_3/2)*noise_ay, 0, dt_2*noise_ay;
+             0, (dt_4/4)*noise_ay, 0, (dt_3/2)*noise_ay,
+             (dt_3/2)*noise_ax, 0, dt_2*noise_ax, 0,
+             0, (dt_3/2)*noise_ay, 0, dt_2*noise_ay;
 
   //3. Call the Kalman Filter predict() function
   ekf_.Predict();
